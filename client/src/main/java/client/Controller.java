@@ -3,6 +3,7 @@ package client;
 import constants.Command;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,12 +18,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -54,11 +57,6 @@ public class Controller implements Initializable {
     private Stage regStage;
     private RegController regController;
 
-    // lesson03 //
-    private String login;
-    // lesson03 //
-
-
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
         authPanel.setVisible(!authenticated);
@@ -70,9 +68,6 @@ public class Controller implements Initializable {
 
         if (!authenticated) {
             nickname = "";
-            // lesson03 //
-            History.stop();
-            // lesson03 //
         }
 
         textArea.clear();
@@ -117,18 +112,13 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split(" ")[1];
                                 setAuthenticated(true);
-                                // lesson03 //
-                                textArea.appendText(History.getLast100LinesFromHistory(login));
-                                History.start(login);
-                                // lesson03 //
                                 break;
                             }
-                            if (str.equals("/reg_ok") || str.equals("/reg_no")) {
+                            if(str.equals("/reg_ok") || str.equals("/reg_no")){
                                 regController.result(str);
                             }
                         } else {
                             textArea.appendText(str + "\n");
-
                         }
                     }
                     //цикл работы
@@ -149,18 +139,16 @@ public class Controller implements Initializable {
                                     }
                                 });
                             }
-                            //+++++++++++//
+//+++++++++++//
                             if (str.startsWith("/yournick ")) {
                                 nickname = str.split(" ")[1];
                                 setTitle(nickname);
                             }
-                            //++++++++++++//
+
+//++++++++++++//
 
                         } else {
                             textArea.appendText(str + "\n");
-                            // lesson03 //
-                            History.writeLine(str);
-                            // lesson03 //
                         }
                     }
                 } catch (IOException e) {
@@ -187,7 +175,6 @@ public class Controller implements Initializable {
             out.writeUTF(textField.getText());
             textField.clear();
             textField.requestFocus();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,10 +184,6 @@ public class Controller implements Initializable {
         if (socket == null || socket.isClosed()) {
             connect();
         }
-
-        // lesson03 //
-        login = loginField.getText().trim();
-        // lesson03 //
 
         String msg = String.format("/auth %s %s", loginField.getText().trim(), passwordField.getText().trim());
         passwordField.clear();

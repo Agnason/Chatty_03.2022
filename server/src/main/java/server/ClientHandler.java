@@ -2,7 +2,9 @@ package server;
 
 import constants.Command;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -15,8 +17,6 @@ public class ClientHandler {
     private boolean authenticated;
     private String nickname;
     private String login;
-    private FileWriter fileWriter;
-    private FileReader fileReader;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -25,7 +25,6 @@ public class ClientHandler {
 
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-
 
             new Thread(() -> {
                 try {
@@ -114,11 +113,10 @@ public class ClientHandler {
                                     sendMsg("Не удалось изменить ник. Ник " + token[1] + " уже используется");
                                 }
                             }
-                            // смена ника в БД
+
                             //+++++++++++//
                         } else {
                             server.broadcastMsg(this, str);
-
                         }
                     }
 
