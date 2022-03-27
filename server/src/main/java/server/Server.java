@@ -1,5 +1,6 @@
 package server;
 
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,12 +18,12 @@ public class Server {
     public Server() {
         clients = new CopyOnWriteArrayList<>();
    //     authService = new SimpleAuthService();
-
+        //lesson02//
         if (!SQLHandler.connect()){
             throw new RuntimeException("Не удалось подключить к БД");
         }
         authService=new DBAuthService();
-
+        //lesson02//
         try {
             server = new ServerSocket(PORT);
             System.out.println("Server started");
@@ -31,6 +32,7 @@ public class Server {
                 socket = server.accept();
                 System.out.println("Client connected");
                 new ClientHandler(this, socket);
+
             }
 
         } catch (IOException e) {
@@ -51,7 +53,7 @@ public class Server {
     }
 
     public void broadcastMsg(ClientHandler sender, String msg) {
-        String message = String.format("[ %s ]: %s", sender.getNickname(), msg);
+        String message = String.format("[%s]: %s", sender.getNickname(), msg);
 
         for (ClientHandler c : clients) {
             c.sendMsg(message);
@@ -59,7 +61,7 @@ public class Server {
     }
 
     public void privateMsg(ClientHandler sender, String receiver, String msg) {
-        String message = String.format("[ %s ] to [ %s ]: %s", sender.getNickname(), receiver, msg);
+        String message = String.format("[%s] to [%s]: %s", sender.getNickname(), receiver, msg);
 
         for (ClientHandler c : clients) {
             if (c.getNickname().equals(receiver)) {
