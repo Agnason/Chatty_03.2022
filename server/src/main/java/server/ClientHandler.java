@@ -15,8 +15,7 @@ public class ClientHandler {
     private boolean authenticated;
     private String nickname;
     private String login;
-    private FileWriter fileWriter;
-    private FileReader fileReader;
+
 
     public ClientHandler(Server server, Socket socket) {
         try {
