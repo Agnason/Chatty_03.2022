@@ -5,8 +5,12 @@ import constants.Command;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.logging.Logger;
 
 public class ClientHandler {
+    // lesson06 //
+    private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
+    // lesson06 //
     private Server server;
     private Socket socket;
     private DataInputStream in;
@@ -54,6 +58,9 @@ public class ClientHandler {
                                         authenticated = true;
                                         server.subscribe(this);
                                         socket.setSoTimeout(0);
+                                        //lesson06//
+                                        logger.info("Client "+nickname+" is authenticated");
+                                        //lesson06//
                                         break;
                                     } else {
                                         sendMsg("Учетная запись уже используется");

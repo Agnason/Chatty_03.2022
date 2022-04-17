@@ -8,8 +8,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server {
+    // lesson06 //
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
+    // lesson06 //
     private ServerSocket server;
     private Socket socket;
     private final int PORT = 8189;
@@ -19,37 +24,51 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-   //     authService = new SimpleAuthService();
+        //     authService = new SimpleAuthService();
         //lesson02//
-        if (!SQLHandler.connect()){
+        if (!SQLHandler.connect()) {
             throw new RuntimeException("Не удалось подключить к БД");
         }
-        authService=new DBAuthService();
+        authService = new DBAuthService();
         //lesson02//
         try {
             server = new ServerSocket(PORT);
-            System.out.println("Server started");
-
+            // lesson06 //
+            // System.out.println("Server started");
+            logger.info("Server started");
+            // lesson06 //
             while (true) {
                 socket = server.accept();
-                System.out.println("Client connected");
+                // lesson06 //
+                //System.out.println("Client connected");
+                logger.info("Client connected " + socket.getRemoteSocketAddress());
+                // lesson06 //
                 new ClientHandler(this, socket);
 
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+            // lesson06 //
+            logger.log(Level.SEVERE, e.getMessage(), e);
+            // lesson06 //
         } finally {
             SQLHandler.disconnect();
             try {
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                // lesson06 //
+                logger.log(Level.SEVERE, e.getMessage(), e);
+                // lesson06 //
             }
             try {
                 server.close();
             } catch (IOException e) {
                 e.printStackTrace();
+                // lesson06 //
+                logger.log(Level.SEVERE, e.getMessage(), e);
+                // lesson06 //
             }
         }
     }
